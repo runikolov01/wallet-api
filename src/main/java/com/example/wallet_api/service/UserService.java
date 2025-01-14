@@ -29,7 +29,7 @@ public interface UserService {
     boolean registerUser(User user);
 
     String registerProcess(String firstName, String lastName, String pin, String city, int telephoneNumber, String email, String password, String confirmPassword, RedirectAttributes redirectAttributes, Model model);
-    
+
     String loginProcess(String email, String password, Model model, HttpSession session);
 
     Optional<User> getUserById(Long userId);
