@@ -104,6 +104,7 @@ public class UserServiceImpl implements UserService {
         Long userId = (Long) session.getAttribute("userId");
 
         if (userId != null) {
+            session.setAttribute("loggedIn", loggedIn);
             model.addAttribute("loggedIn", loggedIn);
             model.addAttribute(userId);
             return "redirect:/myProfile";
