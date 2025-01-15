@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
@@ -67,4 +68,17 @@ public class WalletController {
 
         return "walletDetails";
     }
+
+    @PostMapping("/depositMoney")
+    public String depositMoney(HttpSession session, @RequestParam Long walletId, @RequestParam double amount) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
+
+        walletService.depositMoney(walletId, amount);
+        session.setAttribute("walletId", walletId);
+        return "redirect:/walletDetails/" + walletId;
+    }
+
 }

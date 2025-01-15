@@ -22,9 +22,9 @@
                     <p>Currency: <span th:text="${wallet.currency}"></span></p>
                     <p>Balance: <span th:text="${wallet.balance}"></span></p>
 
-                    <form action="/depositMoney" method="post">
-                        <button class="btn btn-success" type="submit">Deposit Money</button>
-                    </form>
+                    <button class="btn btn-success" data-bs-target="#depositModal" data-bs-toggle="modal" type="button">
+                        Deposit Money
+                    </button>
 
                     <form action="/withdrawMoney" method="post">
                         <button class="btn btn-danger mt-3" type="submit">Withdraw Money</button>
@@ -36,7 +36,85 @@
     </div>
 </div>
 
+<div aria-hidden="true" aria-labelledby="depositModalLabel" class="modal fade" id="depositModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="depositModalLabel">Deposit Money</h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/depositMoney" id="depositForm" method="post">
+                    <input name="walletId" th:value="${wallet.id}" type="hidden">
+
+                    <div class="mb-3">
+                        <label class="form-label" for="amount">Amount</label>
+                        <input class="form-control" id="amount" min="0" name="amount" required type="number">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="currency">Currency</label>
+                        <input class="form-control" id="currency" name="currency" readonly
+                               th:value="${wallet.currency}" type="text">
+                    </div>
+
+                    <h5>Debit Card Details</h5>
+                    <div class="mb-3">
+                        <label class="form-label" for="cardName">Cardholder Name</label>
+                        <input class="form-control" id="cardName" name="cardName" required type="text">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="cardNumber">Card Number</label>
+                        <input class="form-control" id="cardNumber" name="cardNumber"
+                               oninput="enforceMaxLength(this, 16)"
+                               required type="number">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="cvc">CVC</label>
+                        <input class="form-control" id="cvc" name="cvc" oninput="enforceMaxLength(this, 3)"
+                               required type="number">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+                <button class="btn btn-primary" form="depositForm" id="depositButton" type="submit">Deposit</button>
+                <button class="btn btn-secondary" onclick="goBack()">Go Back</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div th:replace="~{fragments/footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById('depositForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        let amount = document.getElementById('amount').value;
+        let cardNumber = document.getElementById('cardNumber').value;
+        let cvc = document.getElementById('cvc').value;
+
+        if (!amount || !cardNumber.match(/^\d{16}$/) || !cvc.match(/^\d{3}$/)) {
+            alert('Please fill out all fields correctly.');
+            return;
+        }
+
+        alert('The deposit is successfully processed!');
+
+        event.target.submit();
+    });
+
+    function enforceMaxLength(element, maxLength) {
+        if (element.value.length > maxLength) {
+            element.value = element.value.slice(0, maxLength);
+        }
+    }
+
+    function goBack() {
+        window.history.back();
+    }
+</script>
 
 </body>
 </html>
