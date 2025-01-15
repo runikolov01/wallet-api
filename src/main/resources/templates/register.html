@@ -71,6 +71,8 @@
                         </div>
 
                         <button class="btn btn-primary w-100" type="submit">Register</button>
+
+                        <button class="btn btn-secondary mt-3" onclick="goBack()">Go Back</button>
                     </form>
                 </div>
                 <div class="card-footer text-center">
@@ -83,5 +85,10 @@
 
 <div th:replace="~{fragments/footer}"></div>
 
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
 </body>
 </html>
