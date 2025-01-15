@@ -184,7 +184,6 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = new User();
-        System.out.println(user);
 
         user.setFirstName(firstName);
         user.setLastName(lastName);
@@ -199,11 +198,9 @@ public class UserServiceImpl implements UserService {
             model.addAttribute("success", "The user is registered successfully!");
             model.addAttribute("loggedUser", user);
 
-            System.out.println("REGISTERED SUCCESSFULLY");
             return "myProfile";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error while registering user");
-            System.out.println("NOT REGISTERED");
             return "redirect:/register";
         }
 
@@ -219,7 +216,6 @@ public class UserServiceImpl implements UserService {
     public String loginProcess(String email, String password, Model model, HttpSession session) {
         User user = getUserByEmail(email);
 
-        System.out.println(user);
 
         if (user != null && verifyPassword(user, password)) {
 
@@ -227,14 +223,11 @@ public class UserServiceImpl implements UserService {
             session.setAttribute("loggedUser", user);
             session.setAttribute("loggedIn", true);
 
-            System.out.println("LOGGED IN");
-
             return "redirect:/myProfile";
         } else {
             model.addAttribute("email", email);
 
             model.addAttribute("error", "Invalid email or password");
-            System.out.println("NOT LOGGED IN");
 
             return "login";
         }
