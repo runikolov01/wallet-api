@@ -73,6 +73,7 @@ public class WalletServiceImpl implements WalletService {
         if (wallet.getBalance() >= amount) {
             wallet.setBalance(wallet.getBalance() - amount);
             walletRepository.save(wallet);
+            walletRepository.flush();
         } else {
             throw new RuntimeException("Insufficient balance");
         }

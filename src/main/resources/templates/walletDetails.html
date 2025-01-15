@@ -20,16 +20,16 @@
                 <div class="card-body">
                     <h4>Wallet Name: <span th:text="${wallet.name}"></span></h4>
                     <p>Currency: <span th:text="${wallet.currency}"></span></p>
-                    <p>Balance: <span th:text="${wallet.balance}"></span></p>
+                    <p>Balance: <span id="walletBalance" th:text="${wallet.balance}"></span></p>
 
                     <button class="btn btn-success" data-bs-target="#depositModal" data-bs-toggle="modal" type="button">
                         Deposit Money
                     </button>
 
-                    <form action="/withdrawMoney" method="post">
-                        <button class="btn btn-danger mt-3" type="submit">Withdraw Money</button>
-                    </form>
-
+                    <button class="btn btn-danger" data-bs-target="#withdrawModal" data-bs-toggle="modal"
+                            type="button">
+                        Withdraw Money
+                    </button>
                 </div>
             </div>
         </div>
@@ -79,7 +79,45 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
                 <button class="btn btn-primary" form="depositForm" id="depositButton" type="submit">Deposit</button>
-                <button class="btn btn-secondary" onclick="goBack()">Go Back</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<button class="btn btn-secondary ms-3" onclick="goBack()">Go Back</button>
+
+<div aria-hidden="true" aria-labelledby="withdrawModalLabel" class="modal fade" id="withdrawModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="withdrawModalLabel">Withdraw Money</h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/withdrawMoney" id="withdrawForm" method="post">
+                    <input id="walletId" name="walletId" th:value="${wallet.id}" type="hidden">
+
+
+                    <div class="mb-3">
+                        <label class="form-label" for="withdrawAmount">Withdraw Money:</label>
+                        <input class="form-control" id="withdrawAmount" min="0" name="amount" required type="number">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="currency">Currency</label>
+                        <input class="form-control" id="withdrawCurrency" name="currency" readonly
+                               th:value="${wallet.currency}" type="text">
+                    </div>
+
+                    <p id="errorMessage" style="color: red; display: none;">You cannot withdraw more money than you
+                        have</p>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+                <button class="btn btn-primary" id="withdrawButton" type="button">Withdraw</button>
             </div>
         </div>
     </div>
@@ -104,6 +142,67 @@
 
         event.target.submit();
     });
+
+    document.getElementById('withdrawModal').addEventListener('show.bs.modal', function () {
+        let balance = parseFloat(document.getElementById('walletBalance').textContent);
+        document.getElementById('balanceDisplay').textContent = balance.toFixed(2);
+
+        document.getElementById('withdrawAmount').addEventListener('input', function () {
+            let amount = parseFloat(this.value);
+            let errorMessage = document.getElementById('errorMessage');
+            let withdrawButton = document.getElementById('withdrawButton');
+
+            if (amount > balance) {
+                this.style.color = 'red';
+                errorMessage.style.display = 'block';
+                withdrawButton.disabled = true;
+            } else if (amount > 0) {
+                this.style.color = '';
+                errorMessage.style.display = 'none';
+                withdrawButton.disabled = false;
+            } else {
+                this.style.color = '';
+                errorMessage.style.display = 'none';
+                withdrawButton.disabled = true;
+            }
+        });
+    });
+
+    document.getElementById('withdrawButton').addEventListener('click', function () {
+        let withdrawAmount = parseFloat(document.getElementById('withdrawAmount').value);
+        let balance = parseFloat(document.getElementById('walletBalance').textContent);
+
+        let walletId = document.getElementById('walletId').value;
+
+        console.log(walletId);
+
+        if (withdrawAmount > balance) {
+            alert('You cannot withdraw more money than you have.');
+        } else {
+            let formData = new FormData();
+            formData.append("walletId", walletId);
+            formData.append("amount", withdrawAmount);
+
+            fetch('/withdrawMoney', {
+                method: 'PUT',
+                body: formData
+            })
+                .then(response => response.text())
+                .then(data => {
+                    if (data === 'Withdrawal successful') {
+                        document.getElementById('walletBalance').textContent = (balance - withdrawAmount).toFixed(2);
+                        alert(data);
+                    } else {
+                        throw new Error(data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Withdrawal failed: ' + error.message);
+                });
+        }
+    });
+
 
     function enforceMaxLength(element, maxLength) {
         if (element.value.length > maxLength) {
