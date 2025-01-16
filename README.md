@@ -37,7 +37,7 @@ Using this application, the users can perform the following operations:
 /createWallet - the user opens this page by clicking the "Create Wallet" button:
 ![image](https://github.com/user-attachments/assets/575f7bf0-be4f-4505-98cf-08ad4ea09bae)
 
-Here the user can choose a wallet name, currency and create it:
+Here the user can choose a wallet name, currency and to create it:
 ![image](https://github.com/user-attachments/assets/57affa4a-979f-418b-b45b-ec3efa6f866f)
 
 /myProfile - Here users can view all their wallets:
@@ -46,7 +46,7 @@ Here the user can choose a wallet name, currency and create it:
 /walletDetails - By clicking on "Open for detailed view", the users can see the balance in the chosen wallet:
 ![image](https://github.com/user-attachments/assets/ea2a0df9-a301-40ed-a745-2b2d7e872216)
 
-When the user wishes to deposit money into their account, they must click the green "deposit" button and fill in the data correctly, then click the blue "deposit" button:
+When the user want to deposit money into their account, they must click the green "deposit" button and fill in the data correctly, then click the blue "deposit" button:
 ![image](https://github.com/user-attachments/assets/d9d4e211-ba9d-4767-8211-89a33d14065a)
 
 If the transaction is successful, the user will receive a message:
