@@ -35,6 +35,13 @@ public class UserController {
         return userService.openLoginForm(error, model, session);
     }
 
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/home";
+    }
+
+
     @PostMapping("/register")
     public String registerSubmit(@RequestParam String firstName, @RequestParam String lastName, @RequestParam String pin, @RequestParam String city, @RequestParam int telephoneNumber, @RequestParam String email, @RequestParam String password, @RequestParam String confirmPassword, RedirectAttributes redirectAttributes, Model model) {
         return userService.registerProcess(firstName, lastName, pin, city, telephoneNumber, email, password, confirmPassword, redirectAttributes, model);
