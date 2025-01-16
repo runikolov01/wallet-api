@@ -25,11 +25,13 @@
                 <div class="card-body">
                     <form action="/login" method="post">
                         <div class="mb-3">
+                            <img alt="email" height="15" src="/images/email.svg" width="20">
                             <label class="form-label" for="email">Email</label>
                             <input class="form-control" id="email" name="email" required th:value="${email}"
                                    type="email">
                         </div>
                         <div class="mb-3">
+                            <img alt="email" height="18" src="/images/password.svg" width="22">
                             <label class="form-label" for="password">Password</label>
                             <input class="form-control" id="password" name="password" required type="password">
                         </div>
