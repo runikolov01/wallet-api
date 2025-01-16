@@ -46,6 +46,15 @@ Here the user can choose a wallet name, currency and create it:
 /walletDetails - By clicking on "Open for detailed view", the users can see the balance in the chosen wallet:
 ![image](https://github.com/user-attachments/assets/ea2a0df9-a301-40ed-a745-2b2d7e872216)
 
+When the user wishes to deposit money into their account, they must click the green "deposit" button and fill in the data correctly, then click the blue "deposit" button:
+![image](https://github.com/user-attachments/assets/d9d4e211-ba9d-4767-8211-89a33d14065a)
+
+If the transaction is successful, the user will receive a message:
+![image](https://github.com/user-attachments/assets/36e205e5-960a-432b-b79f-97673c890694)
+
+And the page will be automatically reloaded to visualize the change in the wallet balance:
+![image](https://github.com/user-attachments/assets/6e624bdd-1650-4007-b17f-0a64c034e48d)
+
 
 
 
