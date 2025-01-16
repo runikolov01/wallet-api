@@ -1,8 +1,10 @@
 package com.example.wallet_api.service.impl;
 
 import com.example.wallet_api.model.User;
+import com.example.wallet_api.model.Wallet;
 import com.example.wallet_api.repository.UserRepository;
 import com.example.wallet_api.service.UserService;
+import com.example.wallet_api.service.WalletService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -23,12 +26,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
+    private final WalletService walletService;
+
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, @Qualifier("userDetailsService") UserDetailsService userDetailsService) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, @Qualifier("userDetailsService") UserDetailsService userDetailsService, WalletService walletService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
+        this.walletService = walletService;
     }
 
     @Override
@@ -104,8 +110,8 @@ public class UserServiceImpl implements UserService {
         Long userId = (Long) session.getAttribute("userId");
 
         if (userId != null) {
-            session.setAttribute("loggedIn", loggedIn);
-            model.addAttribute("loggedIn", loggedIn);
+            session.setAttribute("loggedIn", true);
+            model.addAttribute("loggedIn", true);
             model.addAttribute(userId);
             return "redirect:/myProfile";
         }
@@ -121,8 +127,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String openMyProfile(Model model, HttpSession session) {
+        Boolean loggedIn = (Boolean) session.getAttribute("loggedIn");
         Long userId = (Long) session.getAttribute("userId");
-        if (userId == null) {
+
+        if (userId == null || !Boolean.TRUE.equals(loggedIn)) {
+            loggedIn = false;
+            model.addAttribute("loggedIn", loggedIn);
+            session.setAttribute("loggedIn", loggedIn);
             return "redirect:/login";
         }
 
@@ -132,13 +143,12 @@ public class UserServiceImpl implements UserService {
         }
 
         User loggedUser = loggedUserOptional.get();
-
         model.addAttribute("loggedUser", loggedUser);
         session.setAttribute("loggedUser", loggedUser);
         model.addAttribute("loggedIn", true);
 
-        session.setAttribute("loggedIn", loggedUserOptional);
-        model.addAttribute("loggedIn", loggedUserOptional);
+        List<Wallet> wallets = walletService.getWalletsByUserId(userId);
+        model.addAttribute("wallets", wallets);
 
         return "myprofile";
     }
@@ -235,23 +245,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email); // Fetch user by email
+        return userRepository.findByEmail(email);
     }
 
     @Override
     public boolean checkIfUserExistsByPin(String pin) {
-        return userRepository.existsByPin(pin); // Check if user exists by PIN
+        return userRepository.existsByPin(pin);
     }
 
     @Override
     @Transactional
     public boolean registerUser(User user, String confirmPassword) {
         if (userRepository.existsByEmail(user.getEmail())) {
-            return false; // User already exists by email
+            return false;
         }
 
         if (checkIfUserExistsByPin(user.getPin())) {
-            return false; // User already exists by PIN
+            return false;
         }
 
         if (!user.getPassword().equals(confirmPassword)) {
@@ -267,7 +277,6 @@ public class UserServiceImpl implements UserService {
     public boolean verifyPassword(User user, String password) {
         return passwordEncoder.matches(password, user.getPassword());
     }
-
 
     @Override
     public User getUserByEmail(String email) {
