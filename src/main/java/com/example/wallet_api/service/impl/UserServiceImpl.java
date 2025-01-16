@@ -91,9 +91,7 @@ public class UserServiceImpl implements UserService {
         model.addAttribute("loggedIn", loggedIn);
         model.addAttribute("currentPage", "register");
 
-
         Long userId = (Long) session.getAttribute("userId");
-
         if (userId != null) {
             return "redirect:/myProfile";
         }
@@ -102,31 +100,32 @@ public class UserServiceImpl implements UserService {
     }
 
 
+
     @Override
     public String openLoginForm(String error, Model model, HttpSession session) {
         Boolean loggedIn = (Boolean) session.getAttribute("loggedIn");
         if (loggedIn == null) {
             loggedIn = false;
         }
+        session.setAttribute("loggedIn", loggedIn);
+        model.addAttribute("loggedIn", loggedIn);
+        model.addAttribute("currentPage", "login");
 
         Long userId = (Long) session.getAttribute("userId");
-
         if (userId != null) {
             session.setAttribute("loggedIn", true);
             model.addAttribute("loggedIn", true);
-            model.addAttribute(userId);
+            model.addAttribute("userId", userId);
             return "redirect:/myProfile";
         }
-
 
         if (error != null) {
             model.addAttribute("error", true);
         }
-        session.setAttribute("loggedIn", loggedIn);
-        model.addAttribute("loggedIn", loggedIn);
-        model.addAttribute("currentPage", "login");
+
         return "login";
     }
+
 
     @Override
     public String openMyProfile(Model model, HttpSession session) {
@@ -157,10 +156,11 @@ public class UserServiceImpl implements UserService {
         return "myprofile";
     }
 
+
     @Override
     public boolean registerUser(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
-            return false; // User already exists
+            return false;
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
