@@ -175,8 +175,6 @@
 
         let walletId = document.getElementById('walletId').value;
 
-        console.log(walletId);
-
         if (withdrawAmount > balance) {
             alert('You cannot withdraw more money than you have.');
         } else {
@@ -192,7 +190,13 @@
                 .then(data => {
                     if (data === 'Withdrawal successful') {
                         document.getElementById('walletBalance').textContent = (balance - withdrawAmount).toFixed(2);
+
                         alert(data);
+
+                        let withdrawModal = new bootstrap.Modal(document.getElementById('withdrawModal'));
+                        withdrawModal.hide();
+
+                        location.reload();
                     } else {
                         throw new Error(data);
                     }

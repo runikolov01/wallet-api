@@ -61,6 +61,7 @@ public class UserServiceImpl implements UserService {
         }
         session.setAttribute("loggedIn", loggedIn);
         model.addAttribute("loggedIn", loggedIn);
+        model.addAttribute("currentPage", "home");
 
         Long userId = (Long) session.getAttribute("userId");
 
@@ -86,9 +87,10 @@ public class UserServiceImpl implements UserService {
         if (loggedIn == null) {
             loggedIn = false;
         }
-
         session.setAttribute("loggedIn", loggedIn);
         model.addAttribute("loggedIn", loggedIn);
+        model.addAttribute("currentPage", "register");
+
 
         Long userId = (Long) session.getAttribute("userId");
 
@@ -122,6 +124,7 @@ public class UserServiceImpl implements UserService {
         }
         session.setAttribute("loggedIn", loggedIn);
         model.addAttribute("loggedIn", loggedIn);
+        model.addAttribute("currentPage", "login");
         return "login";
     }
 
@@ -134,6 +137,7 @@ public class UserServiceImpl implements UserService {
             loggedIn = false;
             model.addAttribute("loggedIn", loggedIn);
             session.setAttribute("loggedIn", loggedIn);
+            model.addAttribute("currentPage", "myProfile");
             return "redirect:/login";
         }
 
@@ -206,9 +210,9 @@ public class UserServiceImpl implements UserService {
         try {
             saveUser(user);
             model.addAttribute("success", "The user is registered successfully!");
-            model.addAttribute("loggedUser", user);
+//            model.addAttribute("loggedUser", user);
 
-            return "myProfile";
+            return "login";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error while registering user");
             return "redirect:/register";

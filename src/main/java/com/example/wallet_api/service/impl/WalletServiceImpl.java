@@ -45,6 +45,7 @@ public class WalletServiceImpl implements WalletService {
         }
 
         model.addAttribute("userId", userId);
+        model.addAttribute("currentPage", "createWallet");
 
         return "createWallet";
     }
@@ -78,6 +79,8 @@ public class WalletServiceImpl implements WalletService {
 
         Wallet wallet = getWalletById(walletId);
         model.addAttribute("wallet", wallet);
+        model.addAttribute("currentPage", "walletDetails");
+
 
         return "walletDetails";
     }
