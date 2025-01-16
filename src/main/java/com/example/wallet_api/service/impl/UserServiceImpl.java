@@ -100,7 +100,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
     public String openLoginForm(String error, Model model, HttpSession session) {
         Boolean loggedIn = (Boolean) session.getAttribute("loggedIn");
@@ -169,7 +168,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String registerProcess(String firstName, String lastName, String pin, String city, int telephoneNumber, String email, String password, String confirmPassword, RedirectAttributes redirectAttributes, Model model) {
+    public String registerProcess(String firstName, String lastName, String pin, String city, int telephoneNumber, String email, String password, String confirmPassword, RedirectAttributes redirectAttributes, Model model, HttpSession session) {
         if (!password.equals(confirmPassword)) {
             model.addAttribute("firstName", firstName);
             model.addAttribute("lastName", lastName);
@@ -210,11 +209,14 @@ public class UserServiceImpl implements UserService {
         try {
             saveUser(user);
             model.addAttribute("success", "The user is registered successfully!");
-//            model.addAttribute("loggedUser", user);
+            model.addAttribute("loggedIn", false);
+            session.setAttribute("loggedIn", false);
 
             return "login";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error while registering user");
+            model.addAttribute("loggedIn", false);
+            session.setAttribute("loggedIn", false);
             return "redirect:/register";
         }
 
