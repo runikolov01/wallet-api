@@ -1,4 +1,4 @@
-f## wallet-api
+## wallet-api
 Using this application, the users can perform the following operations: 
 
 ● Register a profile;
