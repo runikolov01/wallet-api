@@ -13,7 +13,7 @@ Using this application, the users can perform the following operations:
 
 ● Withdraw money from a wallet;
 
-## TECH STACK:
+## Tech stack
 
 ● **Frontend**: Bootstrap, JavaScript, HTML, CSS, JavaScript
 
@@ -72,11 +72,60 @@ By pressing the gray "Back" button, the user returns to the previous page:
 /login?logout - By clicking the "Logout" button, the user successfully logs out of their account and is redirected to the login form:
 ![image](https://github.com/user-attachments/assets/c15a6386-3f09-49da-9db2-45b905de645e)
 
+## Instructions on how to set up and run the API locally
+
+● Before you begin, ensure you have the following installed:
+- **Java 11** or later
+- **Maven** (for managing dependencies and building the project)
+- **MySQL** (for the database)
+- **Git** (to clone the repository)
+
+
+● Clone the Repository
+
+To get the project files, clone the repository from GitHub using the following command:
+
+git clone https://github.com/runikolov01/wallet-api.git
+
+● After cloning, navigate to the project directory:
+
+cd wallet-api
+
+
+● MySQL Database Setup
+
+Configure Database Credentials
+
+Update the src/main/resources/application.properties file with your MySQL username and password:
+
+spring.datasource.url=jdbc:mysql://localhost:3306/wallet_db?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC
+
+spring.datasource.username=${DB_USERNAME}
+
+spring.datasource.password=${DB_PASSWORD}
 
 
 
+● Install Dependencies
+
+If you have Maven installed, you can install the project dependencies by running:
+
+mvn clean install
+
+● Run the API Locally
+
+mvn spring-boot:run
+
+Alternatively, you can build the project and run the generated JAR file:
+
+mvn clean package
+
+java -jar target/wallet-api-0.0.1-SNAPSHOT.jar
 
 
+● Access the Application
 
+Once the server is running, the API will be accessible at:
+http://localhost:8080
 
 
