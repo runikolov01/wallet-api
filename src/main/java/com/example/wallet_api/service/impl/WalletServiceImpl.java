@@ -5,6 +5,8 @@ import com.example.wallet_api.repository.WalletRepository;
 import com.example.wallet_api.service.WalletService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -30,8 +32,11 @@ public class WalletServiceImpl implements WalletService {
     public String openCreateWalletForm(Model model, HttpSession session) {
         Boolean loggedIn = (Boolean) session.getAttribute("loggedIn");
         if (loggedIn == null || !loggedIn) {
+            loggedIn = false;
             return "redirect:/login";
         }
+        session.setAttribute("loggedIn", loggedIn);
+        model.addAttribute("loggedIn", loggedIn);
 
         Long userId = (Long) session.getAttribute("userId");
 
@@ -45,19 +50,55 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public void createWallet(Long userId, String walletName, String currency) {
-        Wallet wallet = new Wallet();
-        wallet.setUserId(userId);
-        wallet.setName(walletName);
-        wallet.setCurrency(currency);
-        wallet.setBalance(0.0);
-        walletRepository.save(wallet);
+    public void createWallet(HttpSession session, String walletName, String currency) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId != null) {
+            Wallet wallet = new Wallet();
+            wallet.setUserId(userId);
+            wallet.setName(walletName);
+            wallet.setCurrency(currency);
+            wallet.setBalance(0.0);
+            walletRepository.save(wallet);
+        }
+    }
+
+    @Override
+    public String openWalletDetails(Long walletId, HttpSession session, Model model) {
+        Boolean loggedIn = (Boolean) session.getAttribute("loggedIn");
+        if (loggedIn == null) {
+            loggedIn = false;
+        }
+        session.setAttribute("loggedIn", loggedIn);
+        model.addAttribute("loggedIn", loggedIn);
+
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
+
+        Wallet wallet = getWalletById(walletId);
+        model.addAttribute("wallet", wallet);
+
+        return "walletDetails";
     }
 
     @Override
     public Wallet getWalletById(Long walletId) {
         Optional<Wallet> wallet = walletRepository.findById(walletId);
         return wallet.orElseThrow(() -> new RuntimeException("Wallet not found"));
+    }
+
+    @Override
+    public String handleDeposit(Long walletId, double amount, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
+
+        depositMoney(walletId, amount);
+        session.setAttribute("walletId", walletId);
+
+        return "redirect:/walletDetails/" + walletId;
     }
 
     @Override
@@ -68,14 +109,18 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public void withdrawMoney(Long walletId, double amount) {
+    public ResponseEntity<String> withdrawMoney(Long userId, Long walletId, double amount) {
         Wallet wallet = getWalletById(walletId);
+        if (!wallet.getUserId().equals(userId)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized access to wallet");
+        }
+
         if (wallet.getBalance() >= amount) {
             wallet.setBalance(wallet.getBalance() - amount);
             walletRepository.save(wallet);
-            walletRepository.flush();
+            return ResponseEntity.ok("Withdrawal successful");
         } else {
-            throw new RuntimeException("Insufficient balance");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Insufficient balance");
         }
     }
 }
