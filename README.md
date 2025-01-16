@@ -1,4 +1,4 @@
-## wallet-api
+f## wallet-api
 Using this application, the users can perform the following operations: 
 
 ● Register a profile;
@@ -55,7 +55,7 @@ If the transaction is successful, the user will receive a message:
 And the page will be automatically reloaded to visualize the change in the wallet balance:
 ![image](https://github.com/user-attachments/assets/6e624bdd-1650-4007-b17f-0a64c034e48d)
 
-If the user wants to withdraw money, he must click on the red "Withdraw" button and enter the desired amount. In case the user wishes to withdraw more money than they have available, they will receive a notification that the withdrawal was unsuccessful and they must try again:
+If the user wants to withdraw money, he must click on the red "Withdraw" button and enter the desired amount. In case the user wants to withdraw more money than they have available, they will receive a notification that the withdrawal was unsuccessful and they must try again:
 ![image](https://github.com/user-attachments/assets/60765652-784a-4cae-ab25-50c4df751f46)
 
 ![image](https://github.com/user-attachments/assets/4ff3b493-aaef-4bb9-946f-45796468b72e)
